@@ -1,0 +1,20 @@
+<!DOCTYPE htnl>
+<html lang="utf-8">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-wigth, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>
+	{% block title %}
+		viewerapp
+	{% endblock %}
+	</title>
+</head>
+<body>
+	<a href="{% url 'microrequests_list_url' %}">Microrequests</a>
+	<a href="{% url 'microrequest_create_url' %}">Create New</a>
+	{% block content %}
+		
+	{% endblock %}
+</body>
+</html>

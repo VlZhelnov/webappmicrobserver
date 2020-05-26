@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Create microrequest - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+	<form action="{% url 'microrequest_create_url' %}" method="post">
+		{% csrf_token %}
+		{% for fild in form %}
+			{% if fild.errors %}
+				<p> {{ fild.errors }} </p>
+			{% endif %}
+			<p>
+				{{ fild.label }}
+				{{ fild }}
+			</p>
+		{% endfor %}
+		<button type="submit">Create</button>	
+	</form>
+{% endblock %}
+

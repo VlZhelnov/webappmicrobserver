@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+	View All
+{% endblock %}
+
+{% block content %}
+	<h1> Microrequests: </h1>
+	{% for micreq in micreqs %}
+		<p>
+		 	{{ micreq.title }} -- {{ micreq.data_request}} 
+		</p>
+		<p>
+		 	status: {{ micreq.status}} -- 
+			<a href="{{ micreq.get_absolute_url }}">Detail</a>
+			<a href="{% url 'microrequest_delete_url' pk=micreq.pk %}">Delete</a>
+		</p>
+	{% endfor %}
+{% endblock %}

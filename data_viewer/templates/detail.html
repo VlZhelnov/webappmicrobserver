@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+	{{ micreq.title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+	<h1>
+		{{ micreq.title }}
+	</h1>
+	<p>
+		{{ micreq.data_request }}
+		{{ micreq.data_accept }}
+	</p>
+	<img src="data:image/png;base64,{{ uri }}" alt="" height="256",width="256">	
+	{% for entry in entries %}
+		<p>
+			{{ entry.interval }} {{ entry.temperature}} {{entry.illumination}} 
+		</p>
+	{% endfor %}
+{% endblock %}

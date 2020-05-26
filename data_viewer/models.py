@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.shortcuts import reverse
 # Create your models here.
 
 class Microrequest(models.Model):
@@ -15,6 +15,8 @@ class Microrequest(models.Model):
 	quantity = models.PositiveIntegerField()
 	status =  models.CharField(max_length=10, choices=STATUS_CHOICES, default = "adopted")
 	
+	def get_absolute_url(self):
+	        return reverse('microrequest_detail_url', kwargs={"pk":self.pk})
 	def __str__(self):
 		return self.title
 	
