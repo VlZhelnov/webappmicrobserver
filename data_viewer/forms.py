@@ -1,6 +1,16 @@
 from django import forms
 from .models import Microrequest
 from django.core.exceptions import ValidationError
+from django.db.models import Sum
+
+MAX_FREE_SPACE_DB = 10000
+
+def correct_number(number):
+	if number < 1 or number > 99999:
+		raise ValidationError('Enter number 1 to 99999')
+	return number
+	
+
 
 class MictorequestForm(forms.Form):
 	title = forms.CharField(max_length=200)
@@ -8,16 +18,14 @@ class MictorequestForm(forms.Form):
 	quantity = forms.IntegerField()
 
 	def clean_delay(self):
-		new_delay = self.cleaned_data['delay']
-		print(type(new_delay))
-		if new_delay < 1 or new_delay > 99999:
-			raise ValidationError('Invalid delay (1 to 99999)')
-		return new_delay
+		return correct_number(self.cleaned_data['delay'])
 
 	def clean_quantity(self):
-		new_quantity = self.cleaned_data['quantity']
-		if new_quantity < 1 or new_quantity > 99999:
-			raise ValidationError('Invalid quantity (1 to 99999)')
+		new_quantity = correct_number(self.cleaned_data['quantity'])
+		count_entries = Microrequest.objects.all().aggregate(Sum('quantity'))["quantity__sum"] or 0
+		free = MAX_FREE_SPACE_DB - Microrequest.objects.count() - count_entries - 1
+		if new_quantity > free:	
+			raise ValidationError('Free server space '+ str(0 if free < 0 else free))
 		return new_quantity
 
 	def save(self):
