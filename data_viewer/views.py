@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Microrequest, Entry
 from .forms import MictorequestForm
 from django.views.generic import View
-
+from django.http import JsonResponse
 
 
 import matplotlib 
@@ -10,7 +10,7 @@ from matplotlib.dates import DateFormatter
 from matplotlib.figure import Figure
 import io
 import urllib, base64
-import datetime
+import datetime, time
 import numpy as np
 
 def plot_page(entries, start_time):
@@ -22,7 +22,7 @@ def plot_page(entries, start_time):
 	temp = np.array([t[0] for t in temp])
 	light = np.array([l[0] for l in light])
 
-	fig = Figure(figsize=(10,10), constrained_layout=True, dpi=200)
+	fig = Figure(figsize=(10,10), constrained_layout=True, dpi=100)
 	axs = fig.subplots(2,1)
 	axs[0].plot_date(interval, temp, 'r-', xdate=True, tz='Europe/Moscow')
 	axs[1].plot_date(interval, light, 'y-', xdate=True, tz='Europe/Moscow')
@@ -42,12 +42,20 @@ def microrequests_list(request):
 def microrequest_detail(request, pk):
 	micreq = Microrequest.objects.get(pk=pk)
 	entries = Entry.objects.filter(microrequest_id=pk)
-	return render(request, 'detail.html', context={"micreq": micreq, "entries": entries, "uri":plot_page(entries, micreq.data_accept)})
+	if request.is_ajax():
+		context = {"uri":plot_page(entries, micreq.data_accept), "status": micreq.status,
+				   "count":entries.count()}
+		return JsonResponse(context, status=200)
+	contexti = {"micreq": micreq, "entries": entries, "fps" : micreq.delay * 1000, 
+			 	"uri":plot_page(entries, micreq.data_accept)}
+	return render(request, 'detail.html',context=context) 
+
+
 
 def microrequest_delete(request, pk):
 	entries = Entry.objects.filter(microrequest_id=pk)
-	entries.delete()
 	micreq = Microrequest.objects.get(pk=pk)
+	entries.delete()
 	micreq.delete()
 	return redirect("microrequests_list_url")
 

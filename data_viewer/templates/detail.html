@@ -1,22 +1,57 @@
 {% extends 'base.html' %}
 
-
-{% block title %}
-	{{ micreq.title }} - {{ block.super }}
-{% endblock %}
+{% block title %} {{ micreq.title }} - {{ block.super }} {% endblock %}
 
 {% block content %}
-	<h1>
-		{{ micreq.title }}
+	<h1 id="count">
+		{{ micreq.title }} - {{ entries.count }} out of {{ micreq.quantity }} entries
 	</h1>
+	<h2 id="status">
+ 		Status: {{ micreq.status }}
+	</h2>
 	<p>
-		{{ micreq.data_request }}
-		{{ micreq.data_accept }}
+		Request data: {{ micreq.data_request }}
+	<br>
+		Begin data: {{ micreq.data_accept }}
 	</p>
-	<img src="data:image/png;base64,{{ uri }}" alt="" height="256",width="256">	
+
+	<img id='img' src="data:image/png;base64,{{ uri }}" alt="" height="400",width="400">	
+
+	<br>
+
+	<table border="1">
+		<caption>Entries</caption>
+	<tr>
+		<th>Interval</th>
+		<th>Temperature</th>
+		<th>Illumination</th>
+	</tr>
 	{% for entry in entries %}
-		<p>
-			{{ entry.interval }} {{ entry.temperature}} {{entry.illumination}} 
-		</p>
+		<tr><td>{{ entry.interval }}</td><td>{{ entry.temperature}}</td><td>{{entry.illumination}}</td></tr> 
 	{% endfor %}
+	</table>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+		var id;
+		function update(){
+			$.ajax({
+				url: '{{ micreq.get_absolute_url }}',
+				type: 'get',
+				async: true,
+				success: function(response){
+					$("#img").attr('src', "data:image/png;base64," + response.uri)
+                $("#count").text("{{ micreq.title }} - " + response.count + " out of {{ micreq.quantity }} entries")
+                $("#status").text("Status: "+ response.status)
+                if (response.status == "completed"){
+                    clearInterval(id)
+                }
+            }
+        });
+    }
+    $(document).ready(function(){
+        id = setInterval("update()", {{ fps }});
+    });
+	</script>
+
 {% endblock %}
