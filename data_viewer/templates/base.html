@@ -2,19 +2,34 @@
 <html lang="utf-8">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-wigth, initial-scale=1.0">
+	<meta name="viewport" content="width=device-wigth, initial-scale=1.0, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	{% block script %}{% endblock %}
 	<title>
-	{% block title %}
-		viewerapp
-	{% endblock %}
+	{% block title %} viewerapp {% endblock %}
 	</title>
 </head>
 <body>
-	<a href="{% url 'microrequests_list_url' %}">Microrequests</a>
-	<a href="{% url 'microrequest_create_url' %}">Create New</a>
-	{% block content %}
-		
-	{% endblock %}
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	  <a class="navbar-brand" href="{% url 'microrequests_list_url' %}">Microrequests</a>
+	  <a class="navbar-brand" href="{% url 'microrequest_create_url' %}">Create New</a>
+	</nav>
+
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				{% block content %}
+				{% endblock %}
+			</div>
+    		<div class="col">
+				{% block table %}	
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+	
+	
 </body>
 </html>

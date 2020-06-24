@@ -1,20 +1,28 @@
 {% extends 'base.html' %}
 
 
-{% block title %}
-	View All
-{% endblock %}
+{% block title %} View All {% endblock %}
 
 {% block content %}
-	<h1> Microrequests: </h1>
+
+	<h1 class="mb-5"> Microrequests: </h1>
+	
 	{% for micreq in micreqs %}
-		<p>
-		 	{{ micreq.title }} -- {{ micreq.data_request}} 
-		</p>
-		<p>
-		 	status: {{ micreq.status}} -- 
-			<a href="{{ micreq.get_absolute_url }}">Detail</a>
-			<a href="{% url 'microrequest_delete_url' pk=micreq.pk %}">Delete</a>
-		</p>
+		<div class="card mb-4">
+		  <div class="card-header">
+			{{ micreq.title|title|truncatechars:60 }}
+		  </div>
+		  <div class="card-body">
+			<h5 class="card-title">Status: {{ micreq.status }} <h5>
+			<p class="card-text"> {{ micreq.quantity }} line query at {{ micreq.delay }} second intervals.
+									Total processing time: {{ micreq.data_completed|timeuntil:micreq.data_accept|default:"unknown"}}.</p>
+			<h6 class="card-title"> Add {{ micreq.data_request|date:"d.m.Y" }} {{ micreq.data_request|time:"H:i:s" }} <br>		 
+				 End {{ micreq.data_completed|date:"d.m.Y"|default_if_none:"" }} {{ micreq.data_completed|time:"H:i:s"|default_if_none:"" }}<h6>
+			<a href="{{ micreq.get_absolute_url }}" class="btn btn-primary">Detail</a>
+			<a href="{% url 'microrequest_delete_url' pk=micreq.pk %}" class="btn btn-warning">Delete</a>
+		  </div>
+		</div>
 	{% endfor %}
+
+
 {% endblock %}

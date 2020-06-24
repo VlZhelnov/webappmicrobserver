@@ -1,37 +1,50 @@
 {% extends 'base.html' %}
 
-{% block title %} {{ micreq.title }} - {{ block.super }} {% endblock %}
+{% block title %} {{ micreq.title|truncatechars:20 }} - {{ block.super }} {% endblock %}
 
 {% block content %}
+	<h1>
+		{{ micreq.title }}
+	</h1>
 	<h1 id="count">
-		{{ micreq.title }} - {{ entries.count }} out of {{ micreq.quantity }} entries
+		{{ entries.count }} out of {{ micreq.quantity }} entries
 	</h1>
 	<h2 id="status">
  		Status: {{ micreq.status }}
 	</h2>
 	<p>
-		Request data: {{ micreq.data_request }}
+		Request data: {{ micreq.data_request|date:"d.m.Y"|default_if_none:"" }}
+ 					  {{ micreq.data_request|time:"H:i:s"|default_if_none:"" }}
 	<br>
-		Begin data: {{ micreq.data_accept }}
+		Begin data: {{ micreq.data_accept|date:"d.m.Y"|default_if_none:"" }} 
+					{{ micreq.data_accept|date:"H.i.s"|default_if_none:"" }}
+	<br>
+		End data: {{ micreq.data_completed|date:"d.m.Y"|default_if_none:"" }}
+				  {{ micreq.data_completed|time:"H:i:s"|default_if_none:"" }}
 	</p>
 
-	<img id='img' src="data:image/png;base64,{{ uri }}" alt="" height="400",width="400">	
+	<img id='img' src="data:image/png;base64,{{ uri }}" alt="" height="1000",width="1000">	
+{% endblock %}
 
-	<br>
-
-	<table border="1">
-		<caption>Entries</caption>
-	<tr>
-		<th>Interval</th>
-		<th>Temperature</th>
-		<th>Illumination</th>
-	</tr>
+{% block table %}
+	<h5>New entries in the table will appear after updating the site page.</h5>
+	<table class="table">
+	<caption>Entries</caption>
+	<thead class="thead-inverse">
+		<tr>	
+			<th>N</th>
+			<th>Interval</th>
+			<th>Temperature</th>
+			<th>Illumination</th>
+		</tr>
+	</thead>
 	{% for entry in entries %}
-		<tr><td>{{ entry.interval }}</td><td>{{ entry.temperature}}</td><td>{{entry.illumination}}</td></tr> 
+		<tr><td>{{ forloop.counter }}</td><td>{{ entry.interval }}</td><td>{{ entry.temperature}}</td><td>{{entry.illumination}}</td></tr> 
 	{% endfor %}
 	</table>
+{% endblock %}
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{% block script %}
 	<script>
 		var id;
 		function update(){
@@ -40,8 +53,8 @@
 				type: 'get',
 				async: true,
 				success: function(response){
-					$("#img").attr('src', "data:image/png;base64," + response.uri)
-                $("#count").text("{{ micreq.title }} - " + response.count + " out of {{ micreq.quantity }} entries")
+				$("#img").attr('src', "data:image/png;base64," + response.uri)
+                $("#count").text(response.count + " out of {{ micreq.quantity }} entries")
                 $("#status").text("Status: "+ response.status)
                 if (response.status == "completed"){
                     clearInterval(id)
@@ -53,5 +66,5 @@
         id = setInterval("update()", {{ fps }});
     });
 	</script>
-
 {% endblock %}
+

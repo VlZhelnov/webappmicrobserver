@@ -7,10 +7,12 @@ class Microrequest(models.Model):
 		("adopted", "adopted"),
 		("processing", "processing"),
 		("completed", "completed"),
+		("error", "error"),
 	]
 	title = models.CharField(max_length=200, db_index=True)
 	data_request = models.DateTimeField(auto_now_add=True)
 	data_accept = models.DateTimeField(blank=True, null=True)
+	data_completed = models.DateTimeField(blank=True, null=True)
 	delay = models.PositiveIntegerField()
 	quantity = models.PositiveIntegerField()
 	status =  models.CharField(max_length=10, choices=STATUS_CHOICES, default = "adopted")
