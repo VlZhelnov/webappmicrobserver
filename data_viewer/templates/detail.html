@@ -25,25 +25,6 @@
 
 	<img id='img' src="data:image/png;base64,{{ uri }}" alt="" height="500",width="500">	
 {% endblock %}
-
-{% block table %}
-	<h5>New entries in the table will appear after updating the site page.</h5>
-	<table class="table">
-	<caption>Entries</caption>
-	<thead class="thead-inverse">
-		<tr>	
-			<th>N</th>
-			<th>Interval</th>
-			<th>Temperature</th>
-			<th>Illumination</th>
-		</tr>
-	</thead>
-	{% for entry in entries %}
-		<tr><td>{{ forloop.counter }}</td><td>{{ entry.interval }}</td><td>{{ entry.temperature}}</td><td>{{entry.illumination}}</td></tr> 
-	{% endfor %}
-	</table>
-{% endblock %}
-
 {% block script %}
 	<script>
 		var id;
