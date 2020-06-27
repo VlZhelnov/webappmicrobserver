@@ -19,14 +19,13 @@ def microrequest_detail(request, pk):
 				   "count":entries.count()}
 		return JsonResponse(context, status=200)
 	context = {"micreq": micreq, "entries": entries, "fps" : micreq.delay * 1000, 
-			 	"uri":plot_page(entries, micreq.data_accept)}
+				"uri":plot_page(entries, micreq.data_accept)}
 	return render(request, 'detail.html',context=context) 
 
 def microrequest_delete(request, pk):
-	entries = Entry.objects.filter(microrequest_id=pk)
 	micreq = Microrequest.objects.get(pk=pk)
-	entries.delete()
-	micreq.delete()
+	if micreq.status != "processing":
+		micreq.delete()
 	return redirect("microrequests_list_url")
 
 
