@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from datetime import timedelta as td
+from datetime import datetime as dt
 from django.conf import settings
 import pytz
 import urllib, base64
@@ -7,6 +8,7 @@ import io
 
 
 def utc_to_local(utc_dt):
+	utc_dt = dt.now() if utc_dt is None else utc_dt
 	local_tz = pytz.timezone(settings.TIME_ZONE)
 	local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
 	return local_tz.normalize(local_dt) 
